@@ -1,8 +1,8 @@
-<p style="text-align:center;size:20%">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" />
+<p style="text-align:center;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" width="20%" />
 </p>
-<p style="text-align:center;size:20%">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-plain.svg" />
+<p style="text-align:center;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-plain.svg" width="20%" />
 </p>
 
 # WEB-AUTOMATION-CORE
