@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name":"Crediplanalto WEBController",
+    "description":"Extension that allows you to control web pages by using javascript on them from any script",
+    "version": "0.0.1",
+    "content_scripts":[
+        {
+            "matches":["<all_urls>"],
+            "js":["content.js"]
+        }
+    ],
+    "background":{
+        "service_worker":"index.js"
+    },
+    "action":{
+        "default_popup":"popup.html",
+        "default_icon":"notifyIcon.png"
+    },
+    "icons": {
+        "16": "notifyIcon.png",
+        "32": "notifyIcon.png",
+        "48": "notifyIcon.png",
+        "128": "notifyIcon.png"
+      },
+    "permissions":[
+        "tabs",
+        "scripting",
+        "notifications"
+    ],
+    "host_permissions": ["*://*/*"]
+}
