@@ -8,25 +8,15 @@ const fs = require('fs');
 const WebSocket = require('ws');
 const cors = require('cors');
 
-class extensionSession{
-    constructor(ip, id, url, context){
-        this.ip = ip
-        this.id = id
-        this.url = url
-        this.context = context
-    }
-}
-
-
 class APP{
     constructor(){
+        this.sessions = [];
         this.app = express();
         this.app.use(cors());
         this.port = 6901;
         this.app.use(express.static(__dirname + '/public'));
         this.app.use(bodyParser.json());
 
-        this.sessions = [];
 
         this.app.use((req,res,next) =>{
             if(req.path.toLowerCase() === '/api/auth' || req.path.toLowerCase() === '/api/sessions'){
@@ -52,10 +42,39 @@ class APP{
 
         this.app.get('/api/sessions', (req, res)=>{
             console.log("sessions");
-            res.json({sessions: this.sessions});
+            const sessions =  this.sessions;
+            console.log(sessions);
+            res.status(200).json(sessions);
         });
         
-        this.app.get('/api/ws/', (req, res)=>{
+        this.app.post('/api/sessions/', (req, res)=>{
+            console.log("NEW POST")
+            const id = req.body.id;
+            const execute = req.body.execute;
+
+            const session = this.sessions.find((session)=>{return session.id === id})
+            console.log(session);
+
+            if(!session){
+                return res.status(400).send({error: "Invalid session id"});
+            }
+            session.socket.send(JSON.stringify({
+                type: "execute",
+                execute: execute,
+            }));
+            const result = new Promise((resolve, reject)=>{
+                session.socket.on('message', (message)=>{
+                    const data = JSON.parse(message);
+                    if(data.type === "executeResult"){
+                        resolve(data.result);
+                    }
+                })
+            })
+
+            result.then((result)=>{
+                res.status(200).send({result: result});
+                return
+            })
 
         })
 
@@ -82,9 +101,40 @@ class APP{
         this.wss = new WebSocket.Server({server})
         this.wss.on('connection', (ws) => {
             console.log("connected")
+            ws.send(
+                JSON.stringify(
+                    {
+                        "type":"greet",
+                        "message":""
+                    }
+                )
+            )
+
             ws.on('message',(message)=>{
+                try{
+                    const data = JSON.parse(message);
+                    switch(data.type){
+                        case "register":
+                            this.registerSocket(ws,data);
+                            break;
+
+                        default:
+                            console.log("new message: ", data);
+                            console.log(data.type);
+                            break;
+                        
+                    }
+                }
+                catch(e){
+                    console.log(e);
+                    return;
+                }
                 
             });
+
+            ws.on('test', (message)=>{
+                console.log("test: ", message)
+            })
 
             ws.on('close', ()=>{
                 console.log("closed");
@@ -92,11 +142,6 @@ class APP{
 
             ws.on('error', (err)=>{
                 console.log(err);
-            });
-
-            ws.on('newTab', (tab)=>{
-                console.log(tab)
-                this.sessions.push(new extensionSession(ws._socket.remoteAddress, tab.id));
             });
 
             ws.on('closeTab', (tab)=>{
@@ -112,16 +157,22 @@ class APP{
             })
         }
 
-        this.
 
-        verifyToken = (token)=>{
-            try{
-                jwt.verify(token, fs.readFileSync('./auth/secure/secret.pem'));
-                return true;
+
+        this.registerSocket = (socket, data) =>{
+            const id = data.timestamp.toString() + "--" + data.title;
+            var doesExist = this.sessions[id];
+            while(doesExist){
+                id = id + Math.floor(Math.random() * 1000);
+                doesExist = this.sessions[id];
             }
-            catch(err){
-                return false;
-            }
+
+            this.sessions.push({
+                id: id,
+                url: data.url,
+                title: data.title,
+                socket: socket,
+            })
         }
     }
 }
