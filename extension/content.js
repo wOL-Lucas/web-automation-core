@@ -5,14 +5,24 @@
 
     const functions = {
         clickOnButton: (className, index=null) =>{
+            const buttons = document.getElementsByClassName(className);
+            
+            console.log(buttons);
+
+            if(buttons.length < 1){
+                return 'undefined';
+            }
+
             if (index){
-                const button = document.getElementsByClassName(className)[index];
+                const button = buttons[index];
                 button.click();
                 return;
             }
 
-            const button = document.getElementsByClassName(className)[0];
+            const button = buttons[0];
             button.click();
+
+            return "clicked";
         },
 
         getElementInnerHtml: (className,index) =>{
