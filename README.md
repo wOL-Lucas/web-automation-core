@@ -6,4 +6,7 @@
 # WEB-AUTOMATION-CORE
 
 ## Project idea:
- - To make possible the execution of javascript scripts on current opened browser sessions that are not managed by any driver from selenium.
+ - To make possible the execution of javascript functions on current opened browser sessions that are not managed by any driver like chromedriver.
+ - - Query elements;
+   - Click on buttons;
+   - Retrieve elements inner html;
