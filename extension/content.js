@@ -80,12 +80,46 @@
         },
 
         getElementByFrameworkAttribute: (attribute, value, index=null) =>{
+            /**
+             * Search for a element by framework attribute and returns the element.
+             * @param {string} attribute - The attribute name.
+             * @param {string} value - The attribute value.
+             * @param {int} index - The index of the element in the page.
+             */
+
+
             const elements = document.querySelectorAll(`\\[${attribute}="${value}"]`);
             if (index){
                 return elements[index];
             }
             return elements[0];
         },
+
+        getElementPosition: (className, index=null) =>{
+            /** 
+                Search for a element by class name and returns the x,y position of the element in the page.
+                @param {string} className - The class name of the element.
+                @param {int} index - The index of the element in the page.
+                @returns {object} - The x,y position of the element in the page.
+            */
+
+            if (index){
+                const element = document.getElementsByClassName(className)[index];
+                const rect = element.getBoundingClientRect();
+                return {
+                    x: rect.x,
+                    y: rect.y,
+                }
+            }
+            else{
+                const element = document.getElementsByClassName(className)[0];
+                const rect = element.getBoundingClientRect();
+                return {
+                    x: rect.x,
+                    y: rect.y,
+                }
+            }
+        }
     }
     
     socket.onopen = function(e){
@@ -143,7 +177,7 @@
     };
     
     socket.onclose = function(e){
-        console.log("closed ",e);
+        socket.send('close',e)
     };
     
     
