@@ -81,11 +81,11 @@ class APP{
         this.app.post('/api/auth', (req, res)=>{
             const context = req.body.context;
             if(context === "chrome-web-extension"){
-                const token = jwt.sign({context: context}, fs.readFileSync('./auth/secure/secret.pem'),{expiresIn: '1h'});
+                const token = jwt.sign({context: context}, fs.readFileSync('./auth/secret.pem'),{expiresIn: '1h'});
                 res.send({token: token});
             }
             else{
-                res.status(400).send({error: "Invalid context"});
+                res.status(400).json({error: "Invalid context", context: context});
             }
         })
         
