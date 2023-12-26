@@ -28,7 +28,7 @@ class APP{
                 return res.status(401).send({error: "No token provided"});
             }
 
-            jwt.verify(token, fs.readFileSync('./auth/secure/secret.pem'), (err, decoded)=>{
+            jwt.verify(token, fs.readFileSync('./auth/secret.pem'), (err, decoded)=>{
                 if(err){
                     return res.status(401).send({error: "Invalid token"});
                 }
@@ -91,8 +91,8 @@ class APP{
         
         this.server = (()=>{
             return https.createServer({
-                key: fs.readFileSync('./auth/secure/key.pem'),
-                cert: fs.readFileSync('./auth/secure/cert.pem'),
+                key: fs.readFileSync('./auth/key.pem'),
+                cert: fs.readFileSync('./auth/cert.pem'),
             }, this.app);
         })();
 
