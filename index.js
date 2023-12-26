@@ -136,8 +136,14 @@ class APP{
                 console.log("test: ", message)
             })
 
-            ws.on('close', ()=>{
-                console.log("closed");
+            ws.on('close', (message)=>{
+                console.log("close: ", message)
+                this.sessions.forEach((session)=>{
+                    if(session.socket === ws){
+                        this.sessions.splice(this.sessions.indexOf(session), 1);
+                    }
+                })
+
             });
 
             ws.on('error', (err)=>{
@@ -160,7 +166,7 @@ class APP{
 
 
         this.registerSocket = (socket, data) =>{
-            const id = data.timestamp.toString() + "--" + data.title;
+            const id = data.timestamp.toString() + data.title;
             var doesExist = this.sessions[id];
             while(doesExist){
                 id = id + Math.floor(Math.random() * 1000);
