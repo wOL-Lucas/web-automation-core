@@ -149,12 +149,6 @@ class APP{
             ws.on('error', (err)=>{
                 console.log(err);
             });
-
-            ws.on('closeTab', (tab)=>{
-                console.log(tab)
-                this.sessions.splice(this.sessions.indexOf(tab), 1);
-            });
-
         })
 
         this.startServer = ()=>{
