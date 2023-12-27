@@ -1,5 +1,6 @@
 (() =>{
     console.log(":::web-automation-core inited:::");
+    var page = {};
 
     const socket = new WebSocket('wss://localhost:6901');
 
@@ -110,6 +111,7 @@
                     x: rect.x,
                     y: rect.y,
                 }
+
             }
             else{
                 const element = document.getElementsByClassName(className)[0];
@@ -124,14 +126,28 @@
     
     socket.onopen = function(e){
         console.log("opened")
+
+        page.visibility = document.visibilityState;
+        page.height = document.body.scrollHeight;
+        page.width = document.body.scrollWidth;
+        
         socket.send(JSON.stringify(
             {
                 "type":"register",
                 "url": document.URL,
                 "title": document.title,
+                "pageAttributes": page,
                 "timestamp": Date.now(),
             }
         ));
+
+        window.addEventListener('beforeunload', (e)=>{
+            socket.send(JSON.stringify({
+                "type":"close",
+                "message":"tab closed",
+            }));
+        })
+
     };
     
     socket.onmessage = (e) =>{
@@ -176,9 +192,13 @@
         console.log("error ",e);
     };
     
-    socket.onclose = function(e){
-        socket.send('close',e)
-    };
+    // socket.onclose = function(e){
+    //     console.log("closed ", e);
+    //     socket.send(JSON.stringify({
+    //         "type":"close",
+    //         "message":"tab closed",
+    //     }));
+    // };
     
     
 })();
